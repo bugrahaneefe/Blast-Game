@@ -247,53 +247,152 @@ public class BoardManager : MonoBehaviour
 
     // remove items & apply fall implementations
     public void RemoveItems(List<Item> itemsToRemove)
-{
-    // 1) Collect all obstacles adjacent to these cubes
-    HashSet<ObstacleItem> adjacentObstacles = new HashSet<ObstacleItem>();
-
-    // For each cube being removed, look at neighbors
-    foreach (Item item in itemsToRemove)
     {
-        if (item == null) continue;
+        // if there are adjacent obstacles to be removed
+        HashSet<ObstacleItem> adjacentObstacles = new HashSet<ObstacleItem>();
 
-        // Find neighbors of this item
-        List<Item> neighbors = GetNeighbors(item);
-        foreach (Item neighbor in neighbors)
+        foreach (Item item in itemsToRemove)
         {
-            // Check if neighbor is an ObstacleItem
-            ObstacleItem obstacle = neighbor as ObstacleItem;
-            if (obstacle != null)
+            if (item == null) continue;
+
+            List<Item> neighbors = GetNeighbors(item);
+            foreach (Item neighbor in neighbors)
             {
-                // It's an obstacle, but we only add if it can be damaged by blasts:
-                // (Stone won't take blast damage, but let's add it for completeness;
-                //  the obstacle code itself can ignore if it's stone.)
-                adjacentObstacles.Add(obstacle);
+                ObstacleItem obstacle = neighbor as ObstacleItem;
+                if (obstacle != null)
+                {
+                    adjacentObstacles.Add(obstacle);
+                }
             }
+        }
+
+        // destroy & remove matched cubes
+        foreach (Item i in itemsToRemove)
+        {
+            if (i == null) continue;
+
+            // remove
+            board[i.x, i.y] = null;
+
+            // destroy
+            Destroy(i.gameObject);
+        }
+
+        // damage adjacent obstacles
+        foreach (ObstacleItem obstacle in adjacentObstacles)
+        {
+            obstacle.TakeDamage(); 
+        }
+
+        // start falling logic
+        StartCoroutine(FallExistingItems());
+    }
+    #endregion
+
+    #region falling logic
+
+    // fall Implementation for existing items
+    public IEnumerator FallExistingItems()
+    {
+        // wait for short while before falling
+        yield return new WaitForSeconds(0.2f);
+
+        bool hasFallingItems = false;
+
+        float boardWorldHeight = (height - 1) * spacingY;
+
+        for (int x = 0; x < width; x++)
+        {
+            int writeIndex = height - 1;
+
+            for (int y = height - 1; y >= 0; y--)
+            {
+                if (board[x, y] != null)
+                {
+                    if (writeIndex != y)
+                    {
+                        board[x, writeIndex] = board[x, y];
+                        board[x, y] = null;
+
+                        Item item = board[x, writeIndex].item.GetComponent<Item>();
+                        float fallDistance = Mathf.Abs(y - writeIndex);
+                        item.SetIndicies(x, writeIndex);
+
+                        float finalY = -writeIndex * spacingY + (boardWorldHeight / 2f);
+
+                        // move items down
+                        StartCoroutine(MoveItemDown(item, finalY, fallDistance));
+
+                        hasFallingItems = true;
+                    }
+                    writeIndex--;
+                }
+            }
+        }
+
+        // items landed
+        if (hasFallingItems)
+        {
+            yield return new WaitForSeconds(0.3f);
         }
     }
 
-    // 2) Destroy the matched cubes
-    foreach (Item i in itemsToRemove)
+    // moving items down
+    private IEnumerator MoveItemDown(Item item, float targetY, float fallDistance)
     {
-        if (i == null) continue;
+        item.isFalling = true;
 
-        // Remove from board
-        board[i.x, i.y] = null;
+        float fallSpeed = 4f;
+        Vector3 startPos = item.transform.position;
+        Vector3 endPos = new Vector3(startPos.x, targetY, startPos.z);
 
-        // Destroy object
-        Destroy(i.gameObject);
+        float elapsedTime = 0f;
+        while (elapsedTime < 1f)
+        {
+            elapsedTime += Time.deltaTime * fallSpeed;
+            item.transform.position = Vector3.Lerp(startPos, endPos, elapsedTime);
+            yield return null;
+        }
+        item.transform.position = endPos;
+
+        yield return StartCoroutine(JumpAnimation(item, fallDistance));
+
+        item.isFalling = false;
     }
 
-    // 3) Damage obstacles (boxes/vases) exactly once each
-    //    Stone items won't be affected, since they ignore blast damage.
-    foreach (ObstacleItem obstacle in adjacentObstacles)
+    // jump animation
+    private IEnumerator JumpAnimation(Item item, float fallDistance)
     {
-        obstacle.TakeBlastDamage(); 
+        if (fallDistance < 1) yield break;
+
+        float jumpHeight = Mathf.Clamp(fallDistance * 0.07f, 0.05f, 0.3f);
+        float jumpSpeed = Mathf.Clamp(fallDistance * 0.25f, 1f, 1.8f);
+
+        Vector3 originalPos = item.transform.position;
+        Vector3 peakPos = originalPos + new Vector3(0, jumpHeight, 0);
+
+        float upTime = Mathf.Clamp(0.06f * fallDistance, 0.06f, 0.15f);
+        float downTime = upTime * 0.6f;
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < upTime)
+        {
+            elapsedTime += Time.deltaTime * jumpSpeed;
+            item.transform.position = Vector3.Lerp(originalPos, peakPos, elapsedTime / upTime);
+            yield return null;
+        }
+
+        elapsedTime = 0f;
+
+        while (elapsedTime < downTime)
+        {
+            elapsedTime += Time.deltaTime * jumpSpeed;
+            item.transform.position = Vector3.Lerp(peakPos, originalPos, elapsedTime / downTime);
+            yield return null;
+        }
+
+        item.transform.position = originalPos;
     }
-
-    // Optionally, start falling logic
-    //StartCoroutine(FallExistingItems());
-}
-
     #endregion
 }

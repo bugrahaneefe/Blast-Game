@@ -13,14 +13,11 @@ public class Node
         isClickable = false;
 
         Item itemComponent = _item.GetComponent<Item>();
-        if (itemComponent == null)
-        {
-            // If there's no Item component at all, definitely not clickable
-            isClickable = false;
-            return;
-        }
 
-        // If itemType is Stone, Vase, Box, VRocket, or HRocket => not clickable
+        // guard safe
+        if (itemComponent == null) { isClickable = false; return; }
+
+        // stone, vase, box, vrocket, or hrocket are not clickable (hrocket and vrocket for now, to be fixed!)
         switch (itemComponent.itemType)
         {
             case ItemType.Stone:
@@ -32,7 +29,7 @@ public class Node
                 break;
 
             default:
-                // For any other ItemType (including color cubes), it's clickable
+                // cubes are clickable
                 isClickable = true;
                 break;
         }

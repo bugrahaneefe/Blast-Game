@@ -27,8 +27,5 @@ public class Item : MonoBehaviour
     }
 
     // taking damage is common in all item types
-    public virtual void TakeDamage()
-    {
-        Destroy(this.gameObject);
-    }
+    public virtual void TakeDamage() { }
 }
