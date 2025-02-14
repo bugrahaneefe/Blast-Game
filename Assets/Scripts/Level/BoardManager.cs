@@ -5,7 +5,7 @@ public class BoardManager : MonoBehaviour
 {
     public static BoardManager Instance;
 
-    [Header("Prefabs for Items")]
+    [Header("Item Prefabs")]
     public Item redItemPrefab;
     public Item blueItemPrefab;
     public Item yellowItemPrefab;
@@ -16,14 +16,12 @@ public class BoardManager : MonoBehaviour
     public Item stonePrefab;
     public Item vasePrefab;
 
-    [Header("Spacing")]
-    public float spacingX = 0.55f;
-    public float spacingY = 0.55f;
+    private float spacingX = 1f;
+    private float spacingY = 1.1f;
 
     [Header("Board Background")]
-    [SerializeField] private Sprite boardSprite; // Assign your Sprite here
-    private GameObject boardBackground; // This will hold the background GameObject
-
+    [SerializeField] private Sprite boardSprite;
+    private GameObject boardBackground;
     private Item[,] board;
 
     private void Awake()
@@ -49,9 +47,7 @@ public class BoardManager : MonoBehaviour
         GenerateBoard(levelData);
     }
 
-    /// <summary>
-    /// Generates board layout based on level data.
-    /// </summary>
+    // generate board grid based on data of level
     private void GenerateBoard(LevelData levelData)
     {
         board = new Item[levelData.grid_width, levelData.grid_height];
@@ -59,10 +55,10 @@ public class BoardManager : MonoBehaviour
         float boardWidth = (levelData.grid_width - 1) * spacingX;
         float boardHeight = (levelData.grid_height - 1) * spacingY;
 
-        // Update background
+        // set board background
         UpdateBoardBackground(levelData.grid_width, levelData.grid_height);
 
-        // Generate board items
+        // generate board items manually
         for (int y = 0; y < levelData.grid_height; y++)
         {
             for (int x = 0; x < levelData.grid_width; x++)
@@ -88,37 +84,28 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        // Adjust camera if needed
+        // adjust camera
         CenterCamera(levelData);
     }
 
-    /// <summary>
-    /// Updates the board background by creating or resizing a GameObject with a SpriteRenderer.
-    /// </summary>
+    // Set board background
     private void UpdateBoardBackground(int gridWidth, int gridHeight)
     {
-        if (boardSprite == null) return; // No sprite assigned, skip
-
         if (boardBackground == null)
         {
-            // Create a new GameObject to hold the background
             boardBackground = new GameObject("BoardBackground");
             boardBackground.transform.SetParent(this.transform);
             boardBackground.AddComponent<SpriteRenderer>().sprite = boardSprite;
         }
 
-        // Get the SpriteRenderer and adjust its size
         SpriteRenderer sr = boardBackground.GetComponent<SpriteRenderer>();
 
-        // Scale the background to fit the board (adjust as needed for sprite size)
         sr.drawMode = SpriteDrawMode.Sliced;
         sr.size = new Vector2(gridWidth + 0.4f, gridHeight + 1.2f);
-        sr.sortingOrder = 1; // Ensure it's behind everything
+        sr.sortingOrder = 1;
     }
 
-    /// <summary>
-    /// Adjusts camera position and zoom dynamically based on board size.
-    /// </summary>
+    // Set valid camera position
     private void CenterCamera(LevelData levelData)
     {
         Camera.main.transform.position = new Vector3(0, 0, -10);

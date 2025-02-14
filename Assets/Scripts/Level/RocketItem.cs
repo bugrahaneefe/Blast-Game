@@ -3,7 +3,7 @@ using System.Collections;
 
 public class RocketItem : Item
 {
-    public bool isVertical; // true = vertical, false = horizontal
+    private bool isVertical; // true = vertical, false = horizontal
 
     private void Start()
     {
@@ -11,12 +11,10 @@ public class RocketItem : Item
         if (itemType == ItemType.VRocket)
         {
             isVertical = true;
-            transform.rotation = Quaternion.Euler(0, 0, 90); // Rotate for vertical rocket
         }
         else
         {
             isVertical = false;
-            transform.rotation = Quaternion.Euler(0, 0, 0); // Keep default rotation for horizontal
         }
     }
 

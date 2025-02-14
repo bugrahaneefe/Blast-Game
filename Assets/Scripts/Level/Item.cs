@@ -19,10 +19,9 @@ public class Item : MonoBehaviour
     public int x;
     public int y;
 
-    // Virtual method for taking damage (obstacles might override this)
+    // taking damage is common in all item types
     public virtual void TakeDamage()
     {
-        // Cubes might just get destroyed on blast
         Destroy(this.gameObject);
     }
 }

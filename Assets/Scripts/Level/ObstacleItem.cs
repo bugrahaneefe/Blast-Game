@@ -2,15 +2,15 @@ using UnityEngine;
 
 public class ObstacleItem : Item
 {
-    public int health = 1; // Box = 1, Stone = 1, Vase = 2
-    public Sprite damagedSprite; // The sprite when the vase is hit once
+    public int health = 1;
+    public Sprite damagedSprite;
     private SpriteRenderer spriteRenderer;
 
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        // Assign correct health based on obstacle type
+        // health of vase is 2, others 1
         switch (itemType)
         {
             case ItemType.Box:
@@ -29,21 +29,19 @@ public class ObstacleItem : Item
     {
         health--;
 
-        if (itemType == ItemType.Vase && health == 1)
-        {
+        // if item is vase and it is damaged, turn it into damaged sprite
+        if (itemType == ItemType.Vase && health == 1) {
             ChangeToDamagedSprite();
         }
 
-        if (health <= 0)
-        {
+        if (health <= 0) {
             DestroyObstacle();
         }
     }
 
     private void ChangeToDamagedSprite()
     {
-        if (damagedSprite != null && spriteRenderer != null)
-        {
+        if (damagedSprite != null && spriteRenderer != null) {
             spriteRenderer.sprite = damagedSprite;
         }
     }
