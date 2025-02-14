@@ -36,7 +36,7 @@ public class BoardManager : MonoBehaviour
     private void Start() 
     {
         // load level
-        LevelSceneManager.Instance.LoadLevel(3);
+        LevelSceneManager.Instance.LoadLevel(7);
     }
 
     public void LoadLevelData(int levelNumber)
@@ -61,9 +61,6 @@ public class BoardManager : MonoBehaviour
         // initializing board
         board = new Node[width, height];
 
-        float boardWidth = (width - 1) * spacingX;
-        float boardHeight = (height - 1) * spacingY;
-
         // set background 
         UpdateBoardBackground(width, height);
 
@@ -77,10 +74,7 @@ public class BoardManager : MonoBehaviour
                 var (prefabToSpawn, assignedType) = GetPrefabAndType(type);
                 if (prefabToSpawn == null) continue;
 
-                float posX = x * spacingX - (boardWidth / 2f);
-                float posY = -y * spacingY + (boardHeight / 2f);
-                float zPosition = 0.001f * y;
-                Vector3 spawnPosition = new Vector3(posX, posY, zPosition);
+                Vector3 spawnPosition = GetPosition(x, y);
 
                 GameObject itemObj = Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity);
                         
@@ -89,8 +83,6 @@ public class BoardManager : MonoBehaviour
                 item.transform.SetParent(this.transform);
                 item.transform.localScale = Vector3.one * 0.75f;
                 item.SetIndicies(x, y);
-
-                Debug.Log($"Generated {type} -> {item.itemType} at ({x}, {y})");
 
                 board[x, y] = new Node(itemObj);
             }
@@ -287,6 +279,18 @@ public class BoardManager : MonoBehaviour
         // start falling logic
         StartCoroutine(FallExistingItems());
     }
+
+    private Vector3 GetPosition(int x, int y)
+    {
+        float boardWidth = (width - 1) * spacingX;
+        float boardHeight = (height - 1) * spacingY;
+
+        float posX = x * spacingX - (boardWidth / 2f);
+        float posY = -y * spacingY + (boardHeight / 2f);
+        float zPos = 0.001f * y;
+
+        return new Vector3(posX, posY, zPos);
+    }
     #endregion
 
     #region falling logic
@@ -335,6 +339,74 @@ public class BoardManager : MonoBehaviour
         {
             yield return new WaitForSeconds(0.3f);
         }
+
+        StartCoroutine(FallNewItems());
+    }
+
+    // fall Implementation for new items
+    private IEnumerator FallNewItems()
+    {
+        bool hasNewItems = false;
+
+        // For each column
+        for (int x = 0; x < width; x++)
+        {
+            // We might spawn multiple items if there's more than one empty space in a column
+            int spawnRowCount = 0;
+
+            // From top row (height - 1) down to bottom row (0)
+            for (int y = height - 1; y >= 0; y--)
+            {
+                // If there's nothing here, we need to spawn a new cube
+                if (board[x, y] == null)
+                {
+                    hasNewItems = true;
+
+                    // (1) Get a random prefab & ItemType via GetPrefabAndType("rand")
+                    var (prefabToSpawn, assignedType) = GetPrefabAndType("rand");
+
+                    // (2) Calculate a spawn row above the top row
+                    // using negative indices (e.g., -1, -2, etc.) so they appear "above" in your coordinate system
+                    int spawnRow = -1 - spawnRowCount;
+                    Vector3 spawnPos = GetPosition(x, spawnRow);
+
+                    // Increase the Y position so it starts even higher above the board if you like
+                    spawnPos.y += spacingY * 1.5f; 
+                    
+                    // (3) Adjust the Z-axis so the new item is in front
+                    // e.g., something like negative or smaller z to ensure it renders on top.
+                    // You can tweak this value if needed.
+                    spawnPos.z -= 0.5f;
+
+                    // (4) Instantiate the new Item above the board
+                    GameObject newItemObj = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
+                    newItemObj.transform.SetParent(this.transform);
+                    newItemObj.transform.localScale = Vector3.one * 0.75f;
+
+                    Item newItem = newItemObj.GetComponent<Item>();
+                    newItem.itemType = assignedType;
+
+                    // This item will occupy (x, y) in the grid
+                    newItem.SetIndicies(x, y);
+                    board[x, y] = new Node(newItemObj);
+
+                    // (5) Animate the fall down to the correct Y position
+                    float finalY      = GetWorldPosition(x, y).y;
+                    float fallDistance = Mathf.Abs(spawnRow - y);
+
+                    StartCoroutine(MoveItemDown(newItem, finalY, fallDistance));
+
+                    // Next item in this same column will spawn even higher
+                    spawnRowCount++;
+                }
+            }
+        }
+
+        // If we spawned any new items, wait for them to land
+        if (hasNewItems)
+        {
+            yield return new WaitForSeconds(0.3f);
+        }
     }
 
     // moving items down
@@ -355,6 +427,7 @@ public class BoardManager : MonoBehaviour
         }
         item.transform.position = endPos;
 
+        // jump animation
         yield return StartCoroutine(JumpAnimation(item, fallDistance));
 
         item.isFalling = false;
