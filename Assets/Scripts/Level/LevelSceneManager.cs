@@ -1,0 +1,86 @@
+using System.Collections.Generic;
+using UnityEngine;
+using System.IO;
+using System.Linq;
+
+[System.Serializable]
+public class LevelData
+{
+    public int level_number;
+    public int grid_width;
+    public int grid_height;
+    public int move_count;
+    public List<string> grid;
+}
+
+public class LevelSceneManager : MonoBehaviour
+{
+    private static LevelSceneManager _instance;
+    public static LevelSceneManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                GameObject obj = new GameObject("LevelManager");
+                _instance = obj.AddComponent<LevelSceneManager>();
+                DontDestroyOnLoad(obj);
+                _instance.Initialize();
+            }
+            return _instance;
+        }
+    }
+
+    private string levelsDirectory = "Levels";
+    private Dictionary<int, LevelData> levels = new Dictionary<int, LevelData>();
+    private int currentLevelNumber = 1;
+
+    public void Initialize()
+    {
+        LoadLevels();
+    }
+
+    private void LoadLevels()
+    {
+        string path = Path.Combine(Application.streamingAssetsPath, levelsDirectory);
+
+        string[] files = Directory.GetFiles(path, "*.json");
+        foreach (string file in files)
+        {
+            string json = File.ReadAllText(file);
+            LevelData level = JsonUtility.FromJson<LevelData>(json);
+
+            if (level != null && level.grid != null)
+            {
+                levels[level.level_number] = level;
+                Debug.Log($"Loaded Level {level.level_number} - {level.grid_width}x{level.grid_height}");
+            }
+        }
+    }
+
+    public LevelData GetLevel(int levelNumber)
+    {
+        if (levels.TryGetValue(levelNumber, out LevelData level))
+        {
+            return level;
+        }
+        
+        return null;
+    }
+
+    public int GetCurrentLevelNumber()
+    {
+        return currentLevelNumber;
+    }
+
+    public void SetCurrentLevelNumber(int levelNumber)
+    {
+        currentLevelNumber = levelNumber;
+    }
+
+    public void LoadLevel(int levelNumber)
+    {
+        currentLevelNumber = levelNumber;
+        BoardManager.Instance.LoadLevelData(levelNumber);
+    }
+}
