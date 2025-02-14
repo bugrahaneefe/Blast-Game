@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 954616508695735366}
   - component: {fileID: 3553097976826090501}
   - component: {fileID: 2196658807151311966}
+  - component: {fileID: 6490005927564839031}
   m_Layer: 0
   m_Name: cube_red
   m_TagString: Untagged
@@ -105,3 +106,49 @@ MonoBehaviour:
   y: 0
   defaultState: {fileID: 8166710274925509176, guid: c6b583f4f24cc45c38d9aed41246cce7, type: 3}
   rocketState: {fileID: -4162601588504768772, guid: 3aa1eb875046c4bd59ff55216e58a2eb, type: 3}
+--- !u!61 &6490005927564839031
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3384108957240762211}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.42, y: 1.62}
+    newSize: {x: 1.42, y: 1.62}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.42, y: 1.62}
+  m_EdgeRadius: 0
