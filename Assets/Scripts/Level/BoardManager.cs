@@ -256,14 +256,87 @@ public class BoardManager : MonoBehaviour
                     }
                 }
             }
+            //mark
+            if (connectedItems.Count >= 4)
+            {
+                // Animate them all to the clicked cell
+                StartCoroutine(AnimateMatchedCubes(connectedItems, clickedItem));
 
-            RemoveItems(connectedItems);
+                // We'll remove them & spawn rocket after the animation ends
+            }
+            else
+            {
+                RemoveItems(connectedItems);
 
-            // if goals are checked, go main menu then next level
-            // if else user out of move, show popup panel
-            CheckGoalsAndMoves();
+                // if goals are checked, go main menu then next level
+                // if else user out of move, show popup panel
+                CheckGoalsAndMoves();
+            }
         }
     }
+//mark
+    private IEnumerator AnimateMatchedCubes(List<Item> matchedItems, Item clickedItem)
+{
+    Vector3 targetPos = clickedItem.transform.position;
+
+    float duration = 0.2f;  // time to animate
+    float elapsed = 0f;
+
+    // Cache each item’s original position
+    Dictionary<Item, Vector3> originalPositions = new Dictionary<Item, Vector3>();
+    foreach (Item i in matchedItems)
+    {
+        originalPositions[i] = i.transform.position;
+    }
+
+    while (elapsed < duration)
+    {
+        elapsed += Time.deltaTime;
+        float t = Mathf.Clamp01(elapsed / duration);
+
+        foreach (Item i in matchedItems)
+        {
+            if (i == null) continue;
+            Vector3 startPos = originalPositions[i];
+            i.transform.position = Vector3.Lerp(startPos, targetPos, t);
+        }
+
+        yield return null;
+    }
+
+    // After they arrive at the tapped cell, remove them
+    RemoveItems(matchedItems);  
+    // Then spawn a rocket
+    SpawnRocketAtCell(clickedItem.x, clickedItem.y);
+
+    CheckGoalsAndMoves();
+}
+//mark
+private void SpawnRocketAtCell(int x, int y)
+{
+    // Randomly decide if rocket is V or H
+    bool isVertical = (Random.value > 0.5f);
+    GameObject rocketPrefab = isVertical ? verticalRocketPrefab.gameObject : horizontalRocketPrefab.gameObject;
+
+    // Spawn rocket
+    Vector3 spawnPos = GetPosition(x, y);
+    GameObject rocketObj = Instantiate(rocketPrefab, spawnPos, Quaternion.identity);
+    rocketObj.transform.SetParent(transform);
+    rocketObj.transform.localScale = Vector3.one * 0.75f;
+
+    // Place in board array
+    board[x, y] = new Node(rocketObj);
+
+    // The rocket’s Item component
+    RocketItem rocket = rocketObj.GetComponent<RocketItem>();
+    rocket.itemType = isVertical ? ItemType.VRocket : ItemType.HRocket;
+    rocket.SetIndicies(x, y);
+
+    // Let rocket fall if there's empty space below
+    StartCoroutine(FallExistingItems());
+}
+
+
 
     // each matched pairs should be unique & stored in list of blocks
     public List<Item> GetConnectedItems(Item startItem)

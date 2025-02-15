@@ -23,8 +23,6 @@ public class Node
             case ItemType.Stone:
             case ItemType.Vase:
             case ItemType.Box:
-            case ItemType.VRocket:
-            case ItemType.HRocket:
                 isClickable = false;
                 break;
 

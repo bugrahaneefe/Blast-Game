@@ -14,5 +14,6 @@ public class RocketItem : Item
     private void OnMouseDown()
     {
         // TO DO: implement rocket explosion logic here
+        Debug.Log("rocket is clicked");
     }
 }

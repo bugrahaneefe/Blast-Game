@@ -22,17 +22,8 @@ public class CubeItem : Item
         Node node = BoardManager.Instance.board[x, y];
         if (node == null || !node.isClickable) return;
 
-        // if item is on rocket state generate rocket on mouse down
-        if (isRocketReady)
-        {
-            // TO DO: spawn rocket at exaclty where cubeitem is
-            BoardManager.Instance.HandleItemClick(this);
-        }
-        else
-        {
-            // normal handling of clicked item
-            BoardManager.Instance.HandleItemClick(this);
-        }
+        // handling of clicked item
+        BoardManager.Instance.HandleItemClick(this);
     }
 
     public void SetRocketState(bool state)
