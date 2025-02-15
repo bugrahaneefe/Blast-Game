@@ -586,7 +586,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 1.43, y: 19.6}
+  m_AnchoredPosition: {x: 1.4300003, y: 19.6}
   m_SizeDelta: {x: 86.41, y: 12.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &510953329
@@ -796,6 +796,7 @@ RectTransform:
   - {fileID: 183323699}
   - {fileID: 1101109852}
   - {fileID: 1822621916}
+  - {fileID: 1557602672}
   m_Father: {fileID: 1802551025}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
@@ -1600,7 +1601,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1452646269
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1658,6 +1659,75 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1452646268}
+  m_CullTransparentMesh: 1
+--- !u!1 &1557602671
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1557602672}
+  - component: {fileID: 1557602674}
+  - component: {fileID: 1557602673}
+  m_Layer: 5
+  m_Name: goalPanel_ui
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1557602672
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1557602671}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 613349676}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -371.12, y: -22.420013}
+  m_SizeDelta: {x: -811.96, y: -328.77}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1557602673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1557602671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 75, y: 75}
+  m_Spacing: {x: 25, y: 25}
+  m_Constraint: 1
+  m_ConstraintCount: 2
+--- !u!222 &1557602674
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1557602671}
   m_CullTransparentMesh: 1
 --- !u!1 &1695456080
 GameObject:
@@ -1916,6 +1986,10 @@ MonoBehaviour:
   popup: {fileID: 1452646268}
   tryAgainButton: {fileID: 1440277419}
   exitButton: {fileID: 101326696}
+  goalUIContainer: {fileID: 1557602672}
+  goalBoxPrefab: {fileID: 1608945192739974636, guid: a90f7383cf7b248edb831a9c5687d25a, type: 3}
+  goalStonePrefab: {fileID: 3689819479962745296, guid: b4d0abe00622e4a949a81dbfe8615bd8, type: 3}
+  goalVasePrefab: {fileID: 6956510342696467463, guid: 536da79f38b0c499fb62f30e04dd0da8, type: 3}
 --- !u!1 &1822621915
 GameObject:
   m_ObjectHideFlags: 0

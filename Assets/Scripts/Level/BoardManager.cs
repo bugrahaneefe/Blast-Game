@@ -61,6 +61,8 @@ public class BoardManager : MonoBehaviour
         UIManager.Instance.SetMoveText(availableMoves);
 
         GenerateBoard(levelData);
+
+        UIManager.Instance.SetupGoalUI(boxCount, stoneCount, vaseCount);
     }
 
     #region board generation
@@ -340,8 +342,19 @@ public class BoardManager : MonoBehaviour
                 vaseCount--;
                 break;
         }
-
+        UIManager.Instance.UpdateGoalCount(itemType, GetObstacleCount(itemType));
         Debug.Log($"Obstacles left => Box: {boxCount}, Stone: {stoneCount}, Vase: {vaseCount}");
+    }
+
+    private int GetObstacleCount(ItemType type)
+    {
+        return type switch
+        {
+            ItemType.Box => boxCount,
+            ItemType.Stone => stoneCount,
+            ItemType.Vase => vaseCount,
+            _ => 0
+        };
     }
     #endregion
 
