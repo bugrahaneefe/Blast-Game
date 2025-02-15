@@ -94,13 +94,14 @@ public class UIManager : MonoBehaviour
     #region Goal UI Setup
     public void SetupGoalUI(int boxCount, int stoneCount, int vaseCount)
     {
-        // Clear previous goal UI elements
+        // reset goal panel
         foreach (Transform child in goalUIContainer)
         {
             Destroy(child.gameObject);
         }
         goalUIElements.Clear();
 
+        // assign item types in dictionary with counts (derived from board manager)
         Dictionary<ItemType, int> goalCounts = new Dictionary<ItemType, int>
         {
             { ItemType.Box, boxCount },
@@ -112,11 +113,11 @@ public class UIManager : MonoBehaviour
         {
             if (goal.Value > 0 && goalPrefabs.ContainsKey(goal.Key))
             {
-                // Instantiate goal prefab inside the UI container
+                // generate goal ui prefabs
                 GameObject goalObject = Instantiate(goalPrefabs[goal.Key], goalUIContainer);
                 goalUIElements[goal.Key] = goalObject;
 
-                // Update goal count text if exists
+                // update simultaneously goal count text
                 TMP_Text goalText = goalObject.transform.Find("goalPrefabText_ui")?.GetComponent<TMP_Text>();
                 if (goalText != null)
                 {

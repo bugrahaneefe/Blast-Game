@@ -13,11 +13,6 @@ public class RocketItem : Item
 
     private void OnMouseDown()
     {
-        ExplodeRocket();
-    }
-
-    public void ExplodeRocket()
-    {
-        //StartCoroutine(RocketExplosionRoutine());
+        // TO DO: implement rocket explosion logic here
     }
 }

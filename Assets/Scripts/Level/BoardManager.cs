@@ -5,7 +5,7 @@ using System.Collections;
 public class BoardManager : MonoBehaviour
 {
     public static BoardManager Instance;
-
+    public Node[,] board;
     [Header("Item Prefabs")]
     public Item redItemPrefab;
     public Item blueItemPrefab;
@@ -16,15 +16,11 @@ public class BoardManager : MonoBehaviour
     public Item boxPrefab;
     public Item stonePrefab;
     public Item vasePrefab;
-
+    [SerializeField] private Sprite boardSprite;
+    // spacings
     private float spacingX = 1f;
     private float spacingY = 1.1f;
-
-    [Header("Board Background")]
-    [SerializeField] private Sprite boardSprite;
     private GameObject boardBackground;
-
-    public Node[,] board;
     private int width;
     private int height;
     private int availableMoves;
@@ -50,7 +46,7 @@ public class BoardManager : MonoBehaviour
         LevelData levelData = LevelSceneManager.Instance.GetLevel(levelNumber);
         if (levelData == null)
         {
-            Debug.LogError($"Level {levelNumber} data not found.");
+            Debug.LogError($"level {levelNumber} data not found.");
             return;
         }
 
@@ -115,9 +111,54 @@ public class BoardManager : MonoBehaviour
             }
         }
         
-        Debug.Log($"Obstacles in this level => Box: {boxCount}, Stone: {stoneCount}, Vase: {vaseCount}");
-
+        CheckForRocketState();
         CenterCamera(levelData);
+    }
+
+    private void CheckForRocketState()
+    {
+        // reset cubeitem state to default
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (board[x, y] != null)
+                {
+                    Item item = board[x, y].item.GetComponent<Item>();
+                    if (item is CubeItem cube)
+                    {
+                        cube.SetRocketState(false);
+                    }
+                }
+            }
+        }
+
+        // if there are more than 3 mathced cube SetRocketState true
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (board[x, y] != null)
+                {
+                    Item item = board[x, y].item.GetComponent<Item>();
+                    if (item is CubeItem)
+                    {
+                        List<Item> connectedItems = GetConnectedItems(item);
+
+                        if (connectedItems.Count >= 4)
+                        {
+                            foreach (Item connectedItem in connectedItems)
+                            {
+                                if (connectedItem is CubeItem cube)
+                                {
+                                    cube.SetRocketState(true);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private (GameObject, ItemType) GetPrefabAndType(string itemType)
@@ -205,6 +246,17 @@ public class BoardManager : MonoBehaviour
             availableMoves -= 1;
             UIManager.Instance.SetMoveText(availableMoves);
 
+            if (connectedItems.Count >= 4)
+            {
+                foreach (Item item in connectedItems)
+                {
+                    if (item is CubeItem cube)
+                    {
+                        cube.SetRocketState(true);
+                    }
+                }
+            }
+
             RemoveItems(connectedItems);
 
             // if goals are checked, go main menu then next level
@@ -249,22 +301,22 @@ public class BoardManager : MonoBehaviour
         int x = item.x;
         int y = item.y;
 
-        // Check up
+        // check up
         if (y + 1 < height && board[x, y + 1]?.item != null)
         {
             neighbors.Add(board[x, y + 1].item.GetComponent<Item>());
         }
-        // Check down
+        // check down
         if (y - 1 >= 0 && board[x, y - 1]?.item != null)
         {
             neighbors.Add(board[x, y - 1].item.GetComponent<Item>());
         }
-        // Check left
+        // check left
         if (x - 1 >= 0 && board[x - 1, y]?.item != null)
         {
             neighbors.Add(board[x - 1, y].item.GetComponent<Item>());
         }
-        // Check right
+        // check right
         if (x + 1 < width && board[x + 1, y]?.item != null)
         {
             neighbors.Add(board[x + 1, y].item.GetComponent<Item>());
@@ -359,7 +411,6 @@ public class BoardManager : MonoBehaviour
     #endregion
 
     #region falling logic
-
     // fall Implementation for existing items
     public IEnumerator FallExistingItems()
     {
@@ -405,6 +456,8 @@ public class BoardManager : MonoBehaviour
             yield return new WaitForSeconds(0.3f);
         }
 
+        // check if there are new 4 or more matches for rocket state
+        CheckForRocketState();
         StartCoroutine(FallNewItems());
     }
 
@@ -416,37 +469,27 @@ public class BoardManager : MonoBehaviour
 
         bool hasNewItems = false;
 
-        // For each column
         for (int x = 0; x < width; x++)
         {
-            // We might spawn multiple items if there's more than one empty space in a column
             int spawnRowCount = 0;
 
-            // From top row (height - 1) down to bottom row (0)
+            // from top to bottom
             for (int y = height - 1; y >= 0; y--)
             {
-                // If there's nothing here, we need to spawn a new cube
+                // if node is null we are going to spawn new random cubeitem for there
                 if (board[x, y] == null)
                 {
                     hasNewItems = true;
 
-                    // (1) Get a random prefab & ItemType via GetPrefabAndType("rand")
                     var (prefabToSpawn, assignedType) = GetPrefabAndType("rand");
 
-                    // (2) Calculate a spawn row above the top row
-                    // using negative indices (e.g., -1, -2, etc.) so they appear "above" in your coordinate system
                     int spawnRow = -1 - spawnRowCount;
                     Vector3 spawnPos = GetPosition(x, spawnRow);
 
-                    // Increase the Y position so it starts even higher above the board if you like
                     spawnPos.y += spacingY * 1.5f; 
                     
-                    // (3) Adjust the Z-axis so the new item is in front
-                    // e.g., something like negative or smaller z to ensure it renders on top.
-                    // You can tweak this value if needed.
                     spawnPos.z -= 0.5f;
 
-                    // (4) Instantiate the new Item above the board
                     GameObject newItemObj = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
                     newItemObj.transform.SetParent(this.transform);
                     newItemObj.transform.localScale = Vector3.one * 0.75f;
@@ -454,27 +497,28 @@ public class BoardManager : MonoBehaviour
                     Item newItem = newItemObj.GetComponent<Item>();
                     newItem.itemType = assignedType;
 
-                    // This item will occupy (x, y) in the grid
                     newItem.SetIndicies(x, y);
                     board[x, y] = new Node(newItemObj);
 
-                    // (5) Animate the fall down to the correct Y position
-                    float finalY      = GetPosition(x, y).y;
+                    float finalY = GetPosition(x, y).y;
                     float fallDistance = Mathf.Abs(spawnRow - y);
 
+                    // moving items down
                     StartCoroutine(MoveItemDown(newItem, finalY, fallDistance));
 
-                    // Next item in this same column will spawn even higher
                     spawnRowCount++;
                 }
             }
         }
 
-        // If we spawned any new items, wait for them to land
+        // wait for landing
         if (hasNewItems)
         {
             yield return new WaitForSeconds(0.2f);
         }
+
+        // check if there are new 4 or more matches for rocket state
+        CheckForRocketState();
     }
 
     // moving items down

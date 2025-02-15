@@ -16,30 +16,28 @@ public class LevelEditorUtility : EditorWindow
     {
         GUILayout.Label("Adjust Game Level", EditorStyles.boldLabel);
 
-        // Get currently saved last played level
+        // current level
         int currentLevel = PlayerPrefs.GetInt("LastPlayedLevel", 1);
         GUILayout.Label($"Current Level: {currentLevel}");
 
-        // User Input Field
+        // input for new level number
         newLevelNumber = EditorGUILayout.IntField("New Level Number:", newLevelNumber);
 
         GUILayout.Space(10);
 
-        // Save Button
+        // save button
         if (GUILayout.Button("Save Level"))
         {
             PlayerPrefs.SetInt("LastPlayedLevel", newLevelNumber);
             PlayerPrefs.Save();
-            Debug.Log($"Last played level set to {newLevelNumber}");
             Close();
         }
 
-        // Reset Button
-        if (GUILayout.Button("Reset to Default (1)"))
+        // reset to first level
+        if (GUILayout.Button("Reset to First Level"))
         {
             PlayerPrefs.SetInt("LastPlayedLevel", 1);
             PlayerPrefs.Save();
-            Debug.Log("Last played level reset to default (1).");
             Close();
         }
     }
