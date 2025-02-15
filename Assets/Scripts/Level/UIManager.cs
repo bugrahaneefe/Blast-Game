@@ -33,7 +33,12 @@ public class UIManager : MonoBehaviour
 
     public void ShowPopupPanel() {
         popup.SetActive(true);
-        popup.transform.SetAsLastSibling();
+    }
+
+    public void ShowWin() {
+        int lastPlayedLevel = PlayerPrefs.GetInt("LastPlayedLevel", 1);
+        PlayerPrefs.SetInt("LastPlayedLevel", lastPlayedLevel+1);
+        SceneManager.LoadScene("MainScene");
     }
 
     void OnTryAgainClicked()

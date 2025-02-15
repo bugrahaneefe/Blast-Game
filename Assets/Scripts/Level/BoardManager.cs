@@ -29,6 +29,11 @@ public class BoardManager : MonoBehaviour
     private int height;
     private int availableMoves;
 
+    // obstacle counts
+    private int boxCount;
+    private int stoneCount;
+    private int vaseCount;
+
     private void Awake()
     {
         Instance = this;
@@ -64,6 +69,10 @@ public class BoardManager : MonoBehaviour
         // initializing board
         board = new Node[width, height];
 
+        boxCount = 0;
+        stoneCount = 0;
+        vaseCount = 0;
+
         // set background 
         UpdateBoardBackground(width, height);
 
@@ -88,8 +97,23 @@ public class BoardManager : MonoBehaviour
                 item.SetIndicies(x, y);
 
                 board[x, y] = new Node(itemObj);
+
+                if (assignedType == ItemType.Box)
+                {
+                    boxCount++;
+                }
+                else if (assignedType == ItemType.Stone)
+                {
+                    stoneCount++;
+                }
+                else if (assignedType == ItemType.Vase)
+                {
+                    vaseCount++;
+                }
             }
         }
+        
+        Debug.Log($"Obstacles in this level => Box: {boxCount}, Stone: {stoneCount}, Vase: {vaseCount}");
 
         CenterCamera(levelData);
     }
@@ -181,11 +205,9 @@ public class BoardManager : MonoBehaviour
 
             RemoveItems(connectedItems);
 
-            // if user out of move, show popup panel
-            if (availableMoves <= 0)
-            {
-                UIManager.Instance.ShowPopupPanel();
-            }
+            // if goals are checked, go main menu then next level
+            // if else user out of move, show popup panel
+            CheckGoalsAndMoves();
         }
     }
 
@@ -303,6 +325,24 @@ public class BoardManager : MonoBehaviour
 
         return new Vector3(posX, posY, zPos);
     }
+
+    public void ReduceObstacleCounts(ItemType itemType)
+    {
+        switch (itemType)
+        {
+            case ItemType.Box:
+                boxCount--;
+                break;
+            case ItemType.Stone:
+                stoneCount--;
+                break;
+            case ItemType.Vase:
+                vaseCount--;
+                break;
+        }
+
+        Debug.Log($"Obstacles left => Box: {boxCount}, Stone: {stoneCount}, Vase: {vaseCount}");
+    }
     #endregion
 
     #region falling logic
@@ -311,7 +351,7 @@ public class BoardManager : MonoBehaviour
     public IEnumerator FallExistingItems()
     {
         // wait for short while before falling
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.1f);
 
         bool hasFallingItems = false;
 
@@ -358,6 +398,9 @@ public class BoardManager : MonoBehaviour
     // fall Implementation for new items
     private IEnumerator FallNewItems()
     {
+        // wait for short while before falling
+        yield return new WaitForSeconds(0.2f);
+
         bool hasNewItems = false;
 
         // For each column
@@ -417,7 +460,7 @@ public class BoardManager : MonoBehaviour
         // If we spawned any new items, wait for them to land
         if (hasNewItems)
         {
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.2f);
         }
     }
 
@@ -478,6 +521,20 @@ public class BoardManager : MonoBehaviour
         }
 
         item.transform.position = originalPos;
+    }
+    #endregion
+
+    #region check goals and moves
+    private void CheckGoalsAndMoves() {
+        if (boxCount <= 0 && stoneCount <= 0 && vaseCount <= 0)
+        {
+            // all obstacles cleared, win logic
+            UIManager.Instance.ShowWin();
+
+        } else if (availableMoves <= 0)
+        {
+            UIManager.Instance.ShowPopupPanel();
+        }
     }
     #endregion
 }

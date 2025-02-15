@@ -61,6 +61,7 @@ public class ObstacleItem : Item
     {
         // remove from board if it still references us
         BoardManager.Instance.board[x, y] = null;
+        BoardManager.Instance.ReduceObstacleCounts(itemType);
         Destroy(this.gameObject);
     }
 }
