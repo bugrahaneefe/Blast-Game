@@ -254,11 +254,12 @@ public class BoardManager : MonoBehaviour
             else
             {
                 RemoveItems(connectedItems);
-
                 // if goals are checked, go main menu then next level
                 // if else user out of move, show popup panel
                 CheckGoalsAndMoves();
             }
+
+            SoundManager.Instance.PlayClick();
         }
     }
 
