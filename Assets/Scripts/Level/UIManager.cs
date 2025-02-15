@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
@@ -23,6 +24,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject goalVasePrefab;
     private Dictionary<ItemType, GameObject> goalPrefabs;
     private Dictionary<ItemType, GameObject> goalUIElements = new Dictionary<ItemType, GameObject>();
+
+    [Header("celebration")]
+    [SerializeField] private GameObject celebrationPopup;
 
     private void Awake()
     {
@@ -56,9 +60,23 @@ public class UIManager : MonoBehaviour
     }
 
     public void ShowWin() {
+        StartCoroutine(ShowCelebrationEffect());
+    }
+
+    private IEnumerator ShowCelebrationEffect()
+    {
+        // show celebration panel
+        celebrationPopup.SetActive(true);
+
+        // wait for 4 sec
+        yield return new WaitForSeconds(4f);
+
         int lastPlayedLevel = PlayerPrefs.GetInt("LastPlayedLevel", 1);
         PlayerPrefs.SetInt("LastPlayedLevel", lastPlayedLevel+1);
         SceneManager.LoadScene("MainScene");
+
+        // hide celebration panel
+        celebrationPopup.SetActive(false);
     }
 
     void OnTryAgainClicked()
