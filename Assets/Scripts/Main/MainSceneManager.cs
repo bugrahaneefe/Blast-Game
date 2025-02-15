@@ -34,7 +34,7 @@ public class MainSceneManager : MonoBehaviour
 
     void OnLevelButtonClicked()
     {
-        //SoundManager.Instance.PlayClick();
+        SoundManager.Instance.PlayClick();
         SceneManager.LoadScene("LevelScene");
     }
 }
