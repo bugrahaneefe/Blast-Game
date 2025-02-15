@@ -81,6 +81,10 @@ public class LevelSceneManager : MonoBehaviour
     public void LoadLevel(int levelNumber)
     {
         currentLevelNumber = levelNumber;
+
+        PlayerPrefs.SetInt("LastPlayedLevel", levelNumber);
+        PlayerPrefs.Save();
+
         BoardManager.Instance.LoadLevelData(levelNumber);
     }
 }

@@ -27,16 +27,17 @@ public class BoardManager : MonoBehaviour
     public Node[,] board;
     private int width;
     private int height;
+    private int availableMoves;
 
     private void Awake()
     {
         Instance = this;
     }
 
-    private void Start() 
+    private void Start()
     {
-        // load level
-        LevelSceneManager.Instance.LoadLevel(7);
+        int lastPlayedLevel = PlayerPrefs.GetInt("LastPlayedLevel", 1);
+        LevelSceneManager.Instance.LoadLevel(lastPlayedLevel);
     }
 
     public void LoadLevelData(int levelNumber)
@@ -50,12 +51,14 @@ public class BoardManager : MonoBehaviour
 
         width = levelData.grid_width;
         height = levelData.grid_height;
-        Debug.Log("level created");
+        availableMoves = levelData.move_count;
+
+        UIManager.Instance.SetMoveText(availableMoves);
 
         GenerateBoard(levelData);
     }
 
-    #region Board Generation
+    #region board generation
     private void GenerateBoard(LevelData levelData)
     {
         // initializing board
@@ -139,7 +142,7 @@ public class BoardManager : MonoBehaviour
     }
     #endregion
 
-    #region Camera & Background
+    #region camera & background
     private void UpdateBoardBackground(int gridWidth, int gridHeight)
     {
         if (boardBackground == null)
@@ -151,13 +154,13 @@ public class BoardManager : MonoBehaviour
 
         SpriteRenderer sr = boardBackground.GetComponent<SpriteRenderer>();
         sr.drawMode = SpriteDrawMode.Sliced;
-        sr.size = new Vector2(gridWidth + 0.4f, gridHeight + 1.2f);
+        sr.size = new Vector2(gridWidth + 0.35f, gridHeight + 1.3f);
         sr.sortingOrder = 1;
     }
 
     private void CenterCamera(LevelData levelData)
     {
-        Camera.main.transform.position = new Vector3(0, 0, -10);
+        Camera.main.transform.position = new Vector3(0, 2, -10);
         float ortSize = Mathf.Max(levelData.grid_height, levelData.grid_width);
         float zoomFactor = Mathf.Lerp(1.13f, 1.1f, (ortSize - 4) / 8f);
         Camera.main.orthographicSize = ortSize * zoomFactor;
@@ -173,7 +176,16 @@ public class BoardManager : MonoBehaviour
 
         if (connectedItems.Count >= 2)
         {
+            availableMoves -= 1;
+            UIManager.Instance.SetMoveText(availableMoves);
+
             RemoveItems(connectedItems);
+
+            // if user out of move, show popup panel
+            if (availableMoves <= 0)
+            {
+                UIManager.Instance.ShowPopupPanel();
+            }
         }
     }
 
@@ -391,7 +403,7 @@ public class BoardManager : MonoBehaviour
                     board[x, y] = new Node(newItemObj);
 
                     // (5) Animate the fall down to the correct Y position
-                    float finalY      = GetWorldPosition(x, y).y;
+                    float finalY      = GetPosition(x, y).y;
                     float fallDistance = Mathf.Abs(spawnRow - y);
 
                     StartCoroutine(MoveItemDown(newItem, finalY, fallDistance));
