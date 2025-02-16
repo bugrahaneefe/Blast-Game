@@ -46,13 +46,13 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 1125
-  spriteBorder: {x: 45, y: 158, z: 37, w: 80}
+  spritePixelsToUnits: 650
+  spriteBorder: {x: 0, y: 78, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -117,12 +117,12 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 75
+        y: 78
         width: 1125
-        height: 575
+        height: 572
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 7, y: 161, z: 7, w: 62}
+      border: {x: 16, y: 0, z: 16, w: 81}
       customData: 
       outline: []
       physicsShape: []

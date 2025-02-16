@@ -51,6 +51,7 @@ public class ObstacleItem : Item
             // if vase have 1 health, meaning damaged -> change its sprite to damaged
             if (itemType == ItemType.Vase && health == 1)
             {
+                SoundManager.Instance.PlayVaseCrack();
                 ChangeToDamagedSprite();
             }
         }

@@ -8,6 +8,7 @@ public class SoundManager : MonoBehaviour
     public AudioClip boxBreakSound;
     public AudioClip stoneBreakSound;
     public AudioClip vaseBreakSound;
+    public AudioClip vaseCrackSound;
 
     #region Singleton
     private void Awake()
@@ -53,5 +54,10 @@ public class SoundManager : MonoBehaviour
     public void PlayVaseBreak()
     {
         PlaySound(vaseBreakSound);
+    }
+
+    public void PlayVaseCrack()
+    {
+        PlaySound(vaseCrackSound);
     }
 }
