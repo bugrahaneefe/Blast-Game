@@ -1,15 +1,15 @@
 using UnityEngine;
+using System;
+using System.Collections.Generic;
+using System.Collections;
 
 public class ObstacleItem : Item
 {
     public int health = 1;
-    public Sprite damagedSprite;
-    private SpriteRenderer spriteRenderer;
+    public Sprite damagedSprite; 
 
     private void Start()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-
         // health of vase is 2, others 1
         switch (itemType)
         {
@@ -38,7 +38,13 @@ public class ObstacleItem : Item
 
         if (health <= 0)
         {
-            DestroyObstacle();
+            // update obstacle count
+            BoardManager.Instance.ReduceObstacleCounts(itemType);
+
+            StartCoroutine(DamageEffect());
+
+            // remove from board
+            BoardManager.Instance.board[x, y] = null;
         }
         else
         {
@@ -55,13 +61,5 @@ public class ObstacleItem : Item
         if (damagedSprite != null && spriteRenderer != null) {
             spriteRenderer.sprite = damagedSprite;
         }
-    }
-
-    private void DestroyObstacle()
-    {
-        // remove from board if it still references us
-        BoardManager.Instance.board[x, y] = null;
-        BoardManager.Instance.ReduceObstacleCounts(itemType);
-        Destroy(this.gameObject);
     }
 }

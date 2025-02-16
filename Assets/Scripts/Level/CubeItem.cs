@@ -1,16 +1,18 @@
 using UnityEngine;
+using System;
+using System.Collections.Generic;
+using System.Collections;
 
 public class CubeItem : Item
 {
     [Header("Cube Sprites")]
     public Sprite defaultState;
     public Sprite rocketState;
-    private SpriteRenderer spriteRenderer;
     private bool isRocketReady = false;
 
-    private void Awake()
+    protected override void Awake()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        base.Awake();
         spriteRenderer.sprite = defaultState;
     }
 
@@ -30,5 +32,11 @@ public class CubeItem : Item
     {
         isRocketReady = state;
         spriteRenderer.sprite = state ? rocketState : defaultState;
+    }
+
+    public override void TakeDamage() {
+        StartCoroutine(DamageEffect());
+        // remove from board
+        BoardManager.Instance.board[x, y] = null;
     }
 }

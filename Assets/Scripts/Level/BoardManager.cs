@@ -246,58 +246,21 @@ public class BoardManager : MonoBehaviour
             availableMoves -= 1;
             UIManager.Instance.SetMoveText(availableMoves);
 
+            // if it is a valid match, remove connected items
+            RemoveItems(connectedItems);  
+
+            // if 4 or more matched match clicked, spawn a rocket
             if (connectedItems.Count >= 4)
             {
-                // if 4 or more matched match clicked, animate to create rocketitem
-                StartCoroutine(AnimateMatchedCubes(connectedItems, clickedItem));
+                SpawnRocket(clickedItem.x, clickedItem.y);
             }
-            else
-            {
-                RemoveItems(connectedItems);
-                // if goals are checked, go main menu then next level
-                // if else user out of move, show popup panel
-                CheckGoalsAndMoves();
-            }
+
+            // if goals are checked, go main menu then next level
+            // if else user out of move, show popup panel
+            CheckGoalsAndMoves();
 
             SoundManager.Instance.PlayClick();
         }
-    }
-
-    private IEnumerator AnimateMatchedCubes(List<Item> matchedItems, Item clickedItem)
-    {
-        Vector3 targetPos = clickedItem.transform.position;
-
-        float duration = 0.2f;  // time to animate
-        float elapsed = 0f;
-
-        // store matched items position for animation
-        Dictionary<Item, Vector3> originalPositions = new Dictionary<Item, Vector3>();
-        foreach (Item i in matchedItems)
-        {
-            originalPositions[i] = i.transform.position;
-        }
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / duration);
-
-            foreach (Item i in matchedItems)
-            {
-                if (i == null) continue;
-                Vector3 startPos = originalPositions[i];
-                i.transform.position = Vector3.Lerp(startPos, targetPos, t);
-            }
-
-            yield return null;
-        }
-
-        // remove matched cubes after arriving animation
-        RemoveItems(matchedItems);  
-        // spawn a rocket
-        SpawnRocket(clickedItem.x, clickedItem.y);
-
-        CheckGoalsAndMoves();
     }
 
     private void SpawnRocket(int x, int y)
@@ -410,11 +373,8 @@ public class BoardManager : MonoBehaviour
         {
             if (i == null) continue;
 
-            // remove
-            board[i.x, i.y] = null;
-
-            // destroy
-            Destroy(i.gameObject);
+            // remove from board & destroy
+            i.TakeDamage();
         }
 
         // damage adjacent obstacles
