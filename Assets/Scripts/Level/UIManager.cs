@@ -132,9 +132,15 @@ public class UIManager : MonoBehaviour
         if (goalUIElements.ContainsKey(itemType))
         {
             TMP_Text goalText = goalUIElements[itemType].transform.Find("goalPrefabText_ui")?.GetComponent<TMP_Text>();
+            Image checkmark = goalUIElements[itemType].transform.Find("checkmark_ui")?.GetComponent<Image>();
             if (goalText != null)
             {
-                goalText.text = newCount.ToString();
+                if (newCount == 0) {
+                    goalText.gameObject.SetActive(false);
+                    checkmark.gameObject.SetActive(true);
+                } else {
+                    goalText.text = newCount.ToString();
+                }
             }
         }
     }

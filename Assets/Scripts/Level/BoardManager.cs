@@ -601,7 +601,7 @@ public class BoardManager : MonoBehaviour
     #endregion
 
     #region check goals and moves
-    private void CheckGoalsAndMoves() {
+    public void CheckGoalsAndMoves() {
         if (boxCount <= 0 && stoneCount <= 0 && vaseCount <= 0)
         {
             // all obstacles cleared, win logic

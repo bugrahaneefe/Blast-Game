@@ -30,9 +30,9 @@ public class MiniRocket : MonoBehaviour
     {
         if (other.GetComponent<MiniRocket>() != null)
         {
-            return; // Başka bir MiniRocket'i etkileme!
+            return;
         }
-        
+
         Item item = other.GetComponent<Item>();
         if (item != null)
         {
@@ -45,7 +45,7 @@ public class MiniRocket : MonoBehaviour
         yield return new WaitForSeconds(lifeTime);
 
         StartCoroutine(BoardManager.Instance.FallExistingItems());
-
+        BoardManager.Instance.CheckGoalsAndMoves();
         yield return new WaitForSeconds(0.1f);
         Destroy(gameObject);
     }

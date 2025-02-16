@@ -49,16 +49,23 @@ public class Item : MonoBehaviour
     public IEnumerator DamageEffect() {
         particle.Play();
 
-        if (itemType == ItemType.Box) {
-            SoundManager.Instance.PlayBoxBreak();
-        }
+        switch (itemType)
+        {
+            case ItemType.Box:
+                SoundManager.Instance.PlayBoxBreak();
+                break;
 
-        if (itemType == ItemType.Stone) {
-            SoundManager.Instance.PlayStoneBreak();
-        }
+            case ItemType.Stone:
+                SoundManager.Instance.PlayStoneBreak();
+                break;
 
-        if (itemType == ItemType.Vase) {
-            SoundManager.Instance.PlayVaseBreak();
+            case ItemType.Vase:
+                SoundManager.Instance.PlayVaseBreak();
+                break;
+
+            default:
+                SoundManager.Instance.PlayClick();
+                break;
         }
 
         spriteRenderer.enabled = false;
