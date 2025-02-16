@@ -25,12 +25,12 @@ public class ObstacleItem : Item
         }
     }
 
-    public override void TakeDamage()
+    public override void TakeDamage(DamageSource source = DamageSource.Default)
     {
         // stone is only damaged by rockets
-        if (itemType == ItemType.Stone)
+        if (itemType == ItemType.Stone && source != DamageSource.Rocket)
         {
-            return; // no effect
+            return; // no effect if no rocket
         }
 
         // if box or vase, apply damage

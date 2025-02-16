@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1270304365705010558}
   - component: {fileID: 6752235221134677669}
   - component: {fileID: 4223572153101573182}
+  - component: {fileID: -7140265478363372711}
   m_Layer: 0
   m_Name: obstacle_stone
   m_TagString: Untagged
@@ -105,8 +106,56 @@ MonoBehaviour:
   x: 0
   y: 0
   isFalling: 0
+  spriteRenderer: {fileID: 0}
+  particle: {fileID: 0}
   health: 1
   damagedSprite: {fileID: -1432975368721100300, guid: 408bb056a08bf47648772346631900de, type: 3}
+--- !u!61 &-7140265478363372711
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466173482201415843}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.42, y: 1.61}
+    newSize: {x: 1.42, y: 1.61}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.42, y: 1.61}
+  m_EdgeRadius: 0
 --- !u!1 &3646170554583285829
 GameObject:
   m_ObjectHideFlags: 0

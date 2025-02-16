@@ -1,28 +1,52 @@
 using UnityEngine;
+using System.Collections;
 
-public class MiniRocket: MonoBehaviour
+public class MiniRocket : MonoBehaviour
 {
     [SerializeField] private Vector3 Direction;
     private float minSpeed = 15f;
     private float maxSpeed = 30f;
     private float lifeTime = 1f;
-
     private float elapsedTime = 0f;
-
+    
     private void Start()
     {
-        // destroy rocket after a lifetime
-        Destroy(gameObject, lifeTime);
+        // after a long time execute falling new items into emptied spaces
+        StartCoroutine(DestroyAndTriggerFall());
     }
 
+    // move logic of minirockets
     private void Update()
     {
-        // rocket smoothly get faster and move on its direction
         elapsedTime += Time.deltaTime;
-        
         float t = Mathf.Clamp01(elapsedTime / lifeTime);
         float currentSpeed = Mathf.Lerp(minSpeed, maxSpeed, t);
         
         transform.Translate(Direction * currentSpeed * Time.deltaTime, Space.World);
+    }
+
+    // on box collider triggered - take damage to that item
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.GetComponent<MiniRocket>() != null)
+        {
+            return; // Başka bir MiniRocket'i etkileme!
+        }
+        
+        Item item = other.GetComponent<Item>();
+        if (item != null)
+        {
+            item.TakeDamage(DamageSource.Rocket);
+        }
+    }
+
+    private IEnumerator DestroyAndTriggerFall()
+    {
+        yield return new WaitForSeconds(lifeTime);
+
+        StartCoroutine(BoardManager.Instance.FallExistingItems());
+
+        yield return new WaitForSeconds(0.1f);
+        Destroy(gameObject);
     }
 }

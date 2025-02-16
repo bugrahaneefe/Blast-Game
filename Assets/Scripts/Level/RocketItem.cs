@@ -18,23 +18,27 @@ public class RocketItem : Item
 
     private void OnMouseDown()
     {
-        Debug.Log("rocket is clicked");
-
         // don't explode while falling
         if (isFalling) return; 
 
         ExplodeRocket();
+        BoardManager.Instance.board[x, y] = null;
     }
 
-    public override void TakeDamage()
+    public override void TakeDamage(DamageSource source = DamageSource.Default)
     {
         // another rocket may also explode rocket
         ExplodeRocket();
+
+        BoardManager.Instance.board[x, y] = null;
     }
 
     private void ExplodeRocket()
     {
         BoardManager.Instance.board[x, y] = null;
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
+        spriteRenderer.enabled = false;
 
         // spawn mini rockets in opposite directions
         Vector3 spawnPosition = transform.position;

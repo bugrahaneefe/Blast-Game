@@ -34,7 +34,7 @@ public class CubeItem : Item
         spriteRenderer.sprite = state ? rocketState : defaultState;
     }
 
-    public override void TakeDamage() {
+    public override void TakeDamage(DamageSource source = DamageSource.Default) {
         StartCoroutine(DamageEffect());
         // remove from board
         BoardManager.Instance.board[x, y] = null;

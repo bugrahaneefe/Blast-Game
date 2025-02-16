@@ -16,6 +16,12 @@ public enum ItemType
     Vase
 }
 
+public enum DamageSource
+{
+    Default,
+    Rocket
+}
+
 public class Item : MonoBehaviour
 {
     public ItemType itemType;
@@ -38,10 +44,22 @@ public class Item : MonoBehaviour
     }
 
     // taking damage is common in all item types but implementation may vary.
-    public virtual void TakeDamage() { }
+    public virtual void TakeDamage(DamageSource source = DamageSource.Default) { }
     
     public IEnumerator DamageEffect() {
         particle.Play();
+
+        if (itemType == ItemType.Box) {
+            SoundManager.Instance.PlayBoxBreak();
+        }
+
+        if (itemType == ItemType.Stone) {
+            SoundManager.Instance.PlayStoneBreak();
+        }
+
+        if (itemType == ItemType.Vase) {
+            SoundManager.Instance.PlayVaseBreak();
+        }
 
         spriteRenderer.enabled = false;
 
