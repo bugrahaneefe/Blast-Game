@@ -980,7 +980,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 5
+        scalar: 15
         minScalar: 30
         maxCurve:
           serializedVersion: 2
@@ -1545,9 +1545,7 @@ ParticleSystem:
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 4095080387558074076, guid: 1f73d85960f9e4faab26bcd03b606c5e, type: 3}
-    - sprite: {fileID: 6406247513108631659, guid: d8083792503b04c17b2ad6e8a2b82d2a, type: 3}
-    - sprite: {fileID: -2350886445216773880, guid: 31d1e27d03d504a789669ff7c5d066be, type: 3}
+    - sprite: {fileID: 2886466338421546167, guid: b47da74e13128499fb5963b86609edfb, type: 3}
     flipU: 0
     flipV: 0
   VelocityModule:
@@ -4999,6 +4997,12 @@ MonoBehaviour:
   x: 0
   y: 0
   isFalling: 0
+  spriteRenderer: {fileID: 0}
+  particle: {fileID: 0}
+  hRightPrefab: {fileID: 7128545412806705075, guid: cf7a504daa59c425f9b8372250bbf1fc, type: 3}
+  hLeftPrefab: {fileID: 411099321133886758, guid: 03427ab4690074d00b86bad5eedc8561, type: 3}
+  vUpPrefab: {fileID: 5837560186707040258, guid: 2f71ae1555d774168b56aaa7c1fae966, type: 3}
+  vDownPrefab: {fileID: 7146546531459136149, guid: 4894dfa31714f42b68ece9a74e5651be, type: 3}
 --- !u!61 &8703351459543361016
 BoxCollider2D:
   m_ObjectHideFlags: 0

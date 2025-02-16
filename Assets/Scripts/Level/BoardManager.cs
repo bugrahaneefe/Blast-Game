@@ -21,8 +21,8 @@ public class BoardManager : MonoBehaviour
     private float spacingX = 1f;
     private float spacingY = 1.1f;
     private GameObject boardBackground;
-    private int width;
-    private int height;
+    public int width;
+    public int height;
     private int availableMoves;
 
     // obstacle counts
@@ -273,7 +273,7 @@ public class BoardManager : MonoBehaviour
         Vector3 spawnPos = GetPosition(x, y);
         GameObject rocketObj = Instantiate(rocketPrefab, spawnPos, Quaternion.identity);
         rocketObj.transform.SetParent(transform);
-        rocketObj.transform.localScale = Vector3.one * 0.75f;
+        rocketObj.transform.localScale = Vector3.one * 1f;
 
         // put in board
         board[x, y] = new Node(rocketObj);
@@ -387,7 +387,7 @@ public class BoardManager : MonoBehaviour
         StartCoroutine(FallExistingItems());
     }
 
-    private Vector3 GetPosition(int x, int y)
+    public Vector3 GetPosition(int x, int y)
     {
         float boardWidth = (width - 1) * spacingX;
         float boardHeight = (height - 1) * spacingY;
