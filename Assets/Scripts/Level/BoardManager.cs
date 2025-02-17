@@ -448,12 +448,20 @@ public class BoardManager : MonoBehaviour
             {
                 if (board[x, y] != null)
                 {
+                    // script of item
+                    Item item = board[x, y].item.GetComponent<Item>();
+
+                    // ifitem is stone or box, cant fall to below
+                    if (item.itemType == ItemType.Stone || item.itemType == ItemType.Box)
+                    {
+                        continue;
+                    }
+
                     if (writeIndex != y)
                     {
                         board[x, writeIndex] = board[x, y];
                         board[x, y] = null;
 
-                        Item item = board[x, writeIndex].item.GetComponent<Item>();
                         float fallDistance = Mathf.Abs(y - writeIndex);
                         item.SetIndicies(x, writeIndex);
 
@@ -464,6 +472,7 @@ public class BoardManager : MonoBehaviour
 
                         hasFallingItems = true;
                     }
+
                     writeIndex--;
                 }
             }
@@ -506,9 +515,6 @@ public class BoardManager : MonoBehaviour
                     Vector3 spawnPos = GetPosition(x, spawnRow);
 
                     spawnPos.y += spacingY * 1.5f; 
-                    
-                    spawnPos.z -= 0.5f;
-
                     GameObject newItemObj = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
                     newItemObj.transform.SetParent(this.transform);
                     newItemObj.transform.localScale = Vector3.one * 0.75f;
@@ -547,7 +553,7 @@ public class BoardManager : MonoBehaviour
 
         float fallSpeed = 4f;
         Vector3 startPos = item.transform.position;
-        Vector3 endPos = new Vector3(startPos.x, targetY, startPos.z);
+        Vector3 endPos = new Vector3(startPos.x, targetY, GetPosition(item.x, item.y).z);
 
         float elapsedTime = 0f;
         while (elapsedTime < 1f)
