@@ -7,6 +7,7 @@ public class RocketItem : Item
     public GameObject hLeftPrefab;
     public GameObject vUpPrefab;
     public GameObject vDownPrefab;
+    public bool ifCombo = false;
 
     private bool isVertical; // true = vertical, false = horizontal
 
@@ -31,6 +32,7 @@ public class RocketItem : Item
         ExplodeRocket();
 
         BoardManager.Instance.board[x, y] = null;
+        ifCombo = false;
     }
 
     private void ExplodeRocket()
@@ -42,7 +44,24 @@ public class RocketItem : Item
 
         // spawn mini rockets in opposite directions
         Vector3 spawnPosition = transform.position;
-        if (isVertical)
+
+        // spawn combo rockets in 3x3 layout
+        if (ifCombo) {
+            Instantiate(hLeftPrefab, spawnPosition + new Vector3(0f, -1f, 0f) , Quaternion.identity);
+            Instantiate(hLeftPrefab, spawnPosition + new Vector3(0f, 1f, 0f) , Quaternion.identity);
+            Instantiate(hLeftPrefab, spawnPosition, Quaternion.identity);
+            Instantiate(hRightPrefab, spawnPosition + new Vector3(0f, -1f, 0f) , Quaternion.identity);
+            Instantiate(hRightPrefab, spawnPosition + new Vector3(0f, 1f, 0f) , Quaternion.identity);
+            Instantiate(hRightPrefab, spawnPosition, Quaternion.identity);
+
+            Instantiate(vUpPrefab, spawnPosition + new Vector3(1f, 0f, 0f) , Quaternion.identity);
+            Instantiate(vUpPrefab, spawnPosition + new Vector3(-1f, 0f, 0f) , Quaternion.identity);
+            Instantiate(vUpPrefab, spawnPosition, Quaternion.identity);
+            Instantiate(vDownPrefab, spawnPosition + new Vector3(1f, 0f, 0f) , Quaternion.identity);
+            Instantiate(vDownPrefab, spawnPosition + new Vector3(-1f, 0f, 0f) , Quaternion.identity);
+            Instantiate(vDownPrefab, spawnPosition, Quaternion.identity);
+        }
+        else if (isVertical)
         {
             // spawn mini rocket to up
             Instantiate(vUpPrefab, spawnPosition + Vector3.up, Quaternion.identity);

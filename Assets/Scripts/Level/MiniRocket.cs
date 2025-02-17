@@ -44,6 +44,7 @@ public class MiniRocket : MonoBehaviour
     {
         yield return new WaitForSeconds(lifeTime);
 
+        StartCoroutine(BoardManager.Instance.FallExistingItems());
         BoardManager.Instance.CheckGoalsAndMoves();
         yield return new WaitForSeconds(0.1f);
         Destroy(gameObject);

@@ -239,7 +239,7 @@ public class BoardManager : MonoBehaviour
     public void HandleItemClick(Item clickedItem)
     {
         if (clickedItem == null) return;
-        if (userStunned) return;
+        //if (userStunned) return;
 
         userStunned = true;
 
@@ -249,7 +249,17 @@ public class BoardManager : MonoBehaviour
             
             List<Item> connectedRocketItems = GetConnectedItems(clickedItem);
 
-            RemoveItems(connectedRocketItems, true);
+            if (connectedRocketItems.Count > 1)
+            {
+                // 3x3 effect for the combo rocket explosion
+                clickedItem.GetComponent<RocketItem>().ifCombo = true;
+                RemoveItems(connectedRocketItems, byRocket: true);
+            }
+            else
+            {
+                // rocket explosion
+                RemoveItems(connectedRocketItems, byRocket: true);
+            }
 
             // if goals are checked, go main menu then next level
             // if else user out of move, show popup panel
@@ -323,7 +333,7 @@ public class BoardManager : MonoBehaviour
 
             foreach (Item neighbor in GetNeighbors(current))
             {
-                if (!visited.Contains(neighbor) && neighbor.itemType == startItem.itemType)
+                if (!visited.Contains(neighbor) && AreItemsConnected(startItem, neighbor))
                 {
                     visited.Add(neighbor);
                     queue.Enqueue(neighbor);
@@ -332,6 +342,21 @@ public class BoardManager : MonoBehaviour
         }
 
         return result;
+    }
+
+    // Vrocket and Hrocket can be behaved like they are same type.
+    private bool AreItemsConnected(Item itemA, Item itemB)
+    {
+        // treat rocket types as the same type
+        bool isRocketA = itemA.itemType == ItemType.VRocket || itemA.itemType == ItemType.HRocket;
+        bool isRocketB = itemB.itemType == ItemType.VRocket || itemB.itemType == ItemType.HRocket;
+        if (isRocketA && isRocketB)
+        {
+            return true;
+        }
+
+        // otherwise
+        return itemA.itemType == itemB.itemType;
     }
 
     // determine matches
@@ -374,7 +399,7 @@ public class BoardManager : MonoBehaviour
             foreach (Item i in itemsToRemove)
             {
                 if (i == null) continue;
-                    
+                
                 // remove from board & destroy
                 i.TakeDamage();
             }
@@ -411,10 +436,10 @@ public class BoardManager : MonoBehaviour
             {
                 obstacle.TakeDamage(); 
             }
-        }
 
-        // start falling logic
-        StartCoroutine(FallExistingItems());
+            // start falling logic
+            StartCoroutine(FallExistingItems());
+        }
     }
 
     public Vector3 GetPosition(int x, int y)
@@ -514,12 +539,12 @@ public class BoardManager : MonoBehaviour
         {
             yield return new WaitForSeconds(0.3f);
         }
-        userStunned = false;
-        // generate new cubes for emptied spaces
-        yield return StartCoroutine(FallNewItems());
 
         // check if there are new 4 or more matches for rocket state
         CheckForRocketState();
+
+        // generate new cubes for emptied spaces
+        StartCoroutine(FallNewItems());
     }
 
     // fall Implementation for new items
@@ -540,7 +565,7 @@ public class BoardManager : MonoBehaviour
                 // if node is null we are going to spawn new random cubeitem for there
                 if (board[x, y] == null)
                 {
-                    // if there is a stable obstacle above the empty space, new cube cant fall through there *****
+                    /*// if there is a stable obstacle above the empty space, new cube cant fall through there *****
                     bool hasBlockingObstacleAbove = false;
 
                     for (int checkY = y - 1; checkY >= 0; checkY--)
@@ -562,7 +587,7 @@ public class BoardManager : MonoBehaviour
                     {
                         continue;
                     }
-                    //******
+                    //*******/
 
                     hasNewItems = true;
 
@@ -626,6 +651,7 @@ public class BoardManager : MonoBehaviour
         yield return StartCoroutine(JumpAnimation(item, fallDistance));
 
         item.isFalling = false;
+        item.isNewGenerated = false;
     }
 
     // jump animation
