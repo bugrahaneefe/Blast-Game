@@ -33,7 +33,6 @@ public class LevelSceneManager : MonoBehaviour
 
     private string levelsDirectory = "Levels";
     private Dictionary<int, LevelData> levels = new Dictionary<int, LevelData>();
-    private int currentLevelNumber = 1;
 
     public void Initialize()
     {
@@ -70,21 +69,19 @@ public class LevelSceneManager : MonoBehaviour
 
     public int GetCurrentLevelNumber()
     {
+        int currentLevelNumber = PlayerPrefs.GetInt("LastPlayedLevel", 1);
         return currentLevelNumber;
     }
 
     public void SetCurrentLevelNumber(int levelNumber)
     {
-        currentLevelNumber = levelNumber;
+       PlayerPrefs.SetInt("LastPlayedLevel", levelNumber);
+       PlayerPrefs.Save();
     }
 
     public void LoadLevel(int levelNumber)
     {
-        currentLevelNumber = levelNumber;
-
-        PlayerPrefs.SetInt("LastPlayedLevel", levelNumber);
-        PlayerPrefs.Save();
-
-        BoardManager.Instance.LoadLevelData(levelNumber);
+        int currentLevelNumber = PlayerPrefs.GetInt("LastPlayedLevel", 1);
+        BoardManager.Instance.LoadLevelData(currentLevelNumber);
     }
 }

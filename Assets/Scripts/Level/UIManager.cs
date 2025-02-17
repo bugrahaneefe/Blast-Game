@@ -68,11 +68,10 @@ public class UIManager : MonoBehaviour
         // show celebration panel
         celebrationPopup.SetActive(true);
 
-        // wait for 4 sec
-        yield return new WaitForSeconds(4f);
-
-        int lastPlayedLevel = PlayerPrefs.GetInt("LastPlayedLevel", 1);
-        PlayerPrefs.SetInt("LastPlayedLevel", lastPlayedLevel+1);
+        // wait for 3 sec
+        yield return new WaitForSeconds(3f);
+        LevelSceneManager.Instance.SetCurrentLevelNumber(LevelSceneManager.Instance.GetCurrentLevelNumber() + 1);
+                Debug.Log($"it is called {LevelSceneManager.Instance.GetCurrentLevelNumber()}");
         SceneManager.LoadScene("MainScene");
 
         // hide celebration panel
@@ -81,9 +80,8 @@ public class UIManager : MonoBehaviour
 
     void OnTryAgainClicked()
     {
-        int lastPlayedLevel = PlayerPrefs.GetInt("LastPlayedLevel", 1);
         SceneManager.LoadScene("LevelScene");
-        BoardManager.Instance.LoadLevelData(lastPlayedLevel);
+        BoardManager.Instance.LoadLevelData(LevelSceneManager.Instance.GetCurrentLevelNumber());
     }
 
     void OnExitClicked()

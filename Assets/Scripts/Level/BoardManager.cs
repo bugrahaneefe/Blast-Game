@@ -22,6 +22,7 @@ public class BoardManager : MonoBehaviour
     private float spacingY = 1.1f;
     private GameObject boardBackground;
     private bool userStunned = false;
+    private bool levelEnded = false;
     public int width;
     public int height;
     private int availableMoves;
@@ -38,8 +39,8 @@ public class BoardManager : MonoBehaviour
 
     private void Start()
     {
-        int lastPlayedLevel = PlayerPrefs.GetInt("LastPlayedLevel", 1);
-        LevelSceneManager.Instance.LoadLevel(lastPlayedLevel);
+        levelEnded = false;
+        LevelSceneManager.Instance.LoadLevel(LevelSceneManager.Instance.GetCurrentLevelNumber());
     }
 
     public void LoadLevelData(int levelNumber)
@@ -239,7 +240,7 @@ public class BoardManager : MonoBehaviour
     public void HandleItemClick(Item clickedItem)
     {
         if (clickedItem == null) return;
-        //if (userStunned) return;
+        if (userStunned) return;
 
         userStunned = true;
 
@@ -260,12 +261,6 @@ public class BoardManager : MonoBehaviour
                 // rocket explosion
                 RemoveItems(connectedRocketItems, byRocket: true);
             }
-
-            // if goals are checked, go main menu then next level
-            // if else user out of move, show popup panel
-            CheckGoalsAndMoves();
-
-            SoundManager.Instance.PlayClick();
         }
         
         List<Item> connectedItems = GetConnectedItems(clickedItem);
@@ -283,13 +278,20 @@ public class BoardManager : MonoBehaviour
             {
                 SpawnRocket(clickedItem.x, clickedItem.y);
             }
-
-            // if goals are checked, go main menu then next level
-            // if else user out of move, show popup panel
-            CheckGoalsAndMoves();
-
-            SoundManager.Instance.PlayClick();
         }
+
+        // if goals are checked, go main menu then next level
+        // if else user out of move, show popup panel
+        CheckGoalsAndMoves();
+
+        SoundManager.Instance.PlayClick();
+        StartCoroutine(UnstunAfterDelay(2f));
+    }
+
+    private IEnumerator UnstunAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        userStunned = false;
     }
 
     private void SpawnRocket(int x, int y)
@@ -469,7 +471,6 @@ public class BoardManager : MonoBehaviour
                 break;
         }
         UIManager.Instance.UpdateGoalCount(itemType, GetObstacleCount(itemType));
-        Debug.Log($"Obstacles left => Box: {boxCount}, Stone: {stoneCount}, Vase: {vaseCount}");
     }
 
     private int GetObstacleCount(ItemType type)
@@ -540,11 +541,14 @@ public class BoardManager : MonoBehaviour
             yield return new WaitForSeconds(0.3f);
         }
 
+        // generate new cubes for emptied spaces
+        yield return StartCoroutine(FallNewItems());
+
         // check if there are new 4 or more matches for rocket state
         CheckForRocketState();
 
-        // generate new cubes for emptied spaces
-        StartCoroutine(FallNewItems());
+        // unstun the user for further clicks
+        userStunned = false;
     }
 
     // fall Implementation for new items
@@ -626,6 +630,9 @@ public class BoardManager : MonoBehaviour
 
         // check if there are new 4 or more matches for rocket state
         CheckForRocketState();
+
+        // unstun the user for further clicks
+        userStunned = false;
     }
 
     // moving items down
@@ -692,13 +699,17 @@ public class BoardManager : MonoBehaviour
 
     #region check goals and moves
     public void CheckGoalsAndMoves() {
+        if (levelEnded) return;
+
         if (boxCount <= 0 && stoneCount <= 0 && vaseCount <= 0)
         {
+            levelEnded = true;
             // all obstacles cleared, win logic
             UIManager.Instance.ShowWin();
 
         } else if (availableMoves <= 0)
         {
+            levelEnded = true;
             UIManager.Instance.ShowPopupPanel();
         }
     }

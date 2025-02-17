@@ -32,6 +32,7 @@ public class RocketItem : Item
         ExplodeRocket();
 
         BoardManager.Instance.board[x, y] = null;
+        // reset combo for newly generated rockets
         ifCombo = false;
     }
 
