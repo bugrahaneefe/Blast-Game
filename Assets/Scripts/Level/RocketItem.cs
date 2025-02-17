@@ -22,6 +22,8 @@ public class RocketItem : Item
         if (isFalling) return; 
 
         ExplodeRocket();
+        BoardManager.Instance.availableMoves -= 1;
+        UIManager.Instance.SetMoveText(BoardManager.Instance.availableMoves);
         BoardManager.Instance.board[x, y] = null;
     }
 

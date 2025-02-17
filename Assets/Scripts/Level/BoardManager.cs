@@ -23,7 +23,7 @@ public class BoardManager : MonoBehaviour
     private GameObject boardBackground;
     public int width;
     public int height;
-    private int availableMoves;
+    public int availableMoves;
 
     // obstacle counts
     private int boxCount;
@@ -451,9 +451,10 @@ public class BoardManager : MonoBehaviour
                     // script of item
                     Item item = board[x, y].item.GetComponent<Item>();
 
-                    // ifitem is stone or box, cant fall to below
+                    // if item is stone or box, cant fall to below
                     if (item.itemType == ItemType.Stone || item.itemType == ItemType.Box)
                     {
+                        writeIndex--;
                         continue;
                     }
 
@@ -507,6 +508,30 @@ public class BoardManager : MonoBehaviour
                 // if node is null we are going to spawn new random cubeitem for there
                 if (board[x, y] == null)
                 {
+                    // if there is a stable obstacle above the empty space, new cube cant fall through there *****
+                    bool hasBlockingObstacleAbove = false;
+
+                    for (int checkY = y - 1; checkY >= 0; checkY--)
+                    {
+                        if (board[x, checkY] != null)
+                        {
+                            Item blockingItem = board[x, checkY].item.GetComponent<Item>();
+
+                            // box or stone
+                            if (blockingItem.itemType == ItemType.Stone || blockingItem.itemType == ItemType.Box)
+                            {
+                                hasBlockingObstacleAbove = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (hasBlockingObstacleAbove)
+                    {
+                        continue;
+                    }
+                    //******
+
                     hasNewItems = true;
 
                     var (prefabToSpawn, assignedType) = GetPrefabAndType("rand");

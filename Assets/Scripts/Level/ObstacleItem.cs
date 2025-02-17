@@ -36,7 +36,7 @@ public class ObstacleItem : Item
         // if box or vase, apply damage
         health--;
 
-        if (health <= 0)
+        if (health == 0)
         {
             // update obstacle count
             BoardManager.Instance.ReduceObstacleCounts(itemType);
