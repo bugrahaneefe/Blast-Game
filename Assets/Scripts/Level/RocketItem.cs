@@ -21,15 +21,13 @@ public class RocketItem : Item
         // don't explode while falling
         if (isFalling) return; 
 
-        ExplodeRocket();
-        BoardManager.Instance.availableMoves -= 1;
-        UIManager.Instance.SetMoveText(BoardManager.Instance.availableMoves);
-        BoardManager.Instance.board[x, y] = null;
+        // handling of clicked item
+        BoardManager.Instance.HandleItemClick(this);
     }
 
     public override void TakeDamage(DamageSource source = DamageSource.Default)
     {
-        // another rocket may also explode rocket
+        // explode rocket if taken damage, another rocket may also explode rocket
         ExplodeRocket();
 
         BoardManager.Instance.board[x, y] = null;

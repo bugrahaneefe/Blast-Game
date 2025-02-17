@@ -28,6 +28,7 @@ public class Item : MonoBehaviour
     public int x;
     public int y;
     public bool isFalling;
+    public bool isNewGenerated = false;
     public SpriteRenderer spriteRenderer;
     public ParticleSystem particle;
 

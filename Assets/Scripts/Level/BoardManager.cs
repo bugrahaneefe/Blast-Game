@@ -21,9 +21,10 @@ public class BoardManager : MonoBehaviour
     private float spacingX = 1f;
     private float spacingY = 1.1f;
     private GameObject boardBackground;
+    private bool userStunned = false;
     public int width;
     public int height;
-    public int availableMoves;
+    private int availableMoves;
 
     // obstacle counts
     private int boxCount;
@@ -238,7 +239,25 @@ public class BoardManager : MonoBehaviour
     public void HandleItemClick(Item clickedItem)
     {
         if (clickedItem == null) return;
+        if (userStunned) return;
 
+        userStunned = true;
+
+        if (clickedItem.itemType == ItemType.VRocket || clickedItem.itemType == ItemType.HRocket) {
+            availableMoves -= 1;
+            UIManager.Instance.SetMoveText(availableMoves);
+            
+            List<Item> connectedRocketItems = GetConnectedItems(clickedItem);
+
+            RemoveItems(connectedRocketItems, true);
+
+            // if goals are checked, go main menu then next level
+            // if else user out of move, show popup panel
+            CheckGoalsAndMoves();
+
+            SoundManager.Instance.PlayClick();
+        }
+        
         List<Item> connectedItems = GetConnectedItems(clickedItem);
 
         if (connectedItems.Count >= 2)
@@ -348,39 +367,50 @@ public class BoardManager : MonoBehaviour
     }
 
     // remove items & apply fall implementations
-    public void RemoveItems(List<Item> itemsToRemove)
+    private void RemoveItems(List<Item> itemsToRemove, bool byRocket = false)
     {
-        // if there are adjacent obstacles to be removed
-        HashSet<ObstacleItem> adjacentObstacles = new HashSet<ObstacleItem>();
-
-        foreach (Item item in itemsToRemove)
-        {
-            if (item == null) continue;
-
-            List<Item> neighbors = GetNeighbors(item);
-            foreach (Item neighbor in neighbors)
+        if (byRocket) {            
+            // destroy & remove matched rockets
+            foreach (Item i in itemsToRemove)
             {
-                ObstacleItem obstacle = neighbor as ObstacleItem;
-                if (obstacle != null)
+                if (i == null) continue;
+                    
+                // remove from board & destroy
+                i.TakeDamage();
+            }
+        } else {
+            // if there are adjacent obstacles to be removed
+            HashSet<ObstacleItem> adjacentObstacles = new HashSet<ObstacleItem>();
+
+            foreach (Item item in itemsToRemove)
+            {
+                if (item == null) continue;
+
+                List<Item> neighbors = GetNeighbors(item);
+                foreach (Item neighbor in neighbors)
                 {
-                    adjacentObstacles.Add(obstacle);
+                    ObstacleItem obstacle = neighbor as ObstacleItem;
+                    if (obstacle != null)
+                    {
+                        adjacentObstacles.Add(obstacle);
+                    }
                 }
             }
-        }
 
-        // destroy & remove matched cubes
-        foreach (Item i in itemsToRemove)
-        {
-            if (i == null) continue;
+            // destroy & remove matched cubes
+            foreach (Item i in itemsToRemove)
+            {
+                if (i == null) continue;
 
-            // remove from board & destroy
-            i.TakeDamage();
-        }
+                // remove from board & destroy
+                i.TakeDamage();
+            }
 
-        // damage adjacent obstacles
-        foreach (ObstacleItem obstacle in adjacentObstacles)
-        {
-            obstacle.TakeDamage(); 
+            // damage adjacent obstacles
+            foreach (ObstacleItem obstacle in adjacentObstacles)
+            {
+                obstacle.TakeDamage(); 
+            }
         }
 
         // start falling logic
@@ -484,17 +514,19 @@ public class BoardManager : MonoBehaviour
         {
             yield return new WaitForSeconds(0.3f);
         }
+        userStunned = false;
+        // generate new cubes for emptied spaces
+        yield return StartCoroutine(FallNewItems());
 
         // check if there are new 4 or more matches for rocket state
         CheckForRocketState();
-        StartCoroutine(FallNewItems());
     }
 
     // fall Implementation for new items
     private IEnumerator FallNewItems()
     {
         // wait for short while before falling
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.1f);
 
         bool hasNewItems = false;
 
@@ -554,7 +586,7 @@ public class BoardManager : MonoBehaviour
                     float fallDistance = Mathf.Abs(spawnRow - y);
 
                     // moving items down
-                    StartCoroutine(MoveItemDown(newItem, finalY, fallDistance));
+                    StartCoroutine(MoveItemDown(newItem, finalY, fallDistance, true));
 
                     spawnRowCount++;
                 }
@@ -564,7 +596,7 @@ public class BoardManager : MonoBehaviour
         // wait for landing
         if (hasNewItems)
         {
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.3f);
         }
 
         // check if there are new 4 or more matches for rocket state
@@ -572,8 +604,9 @@ public class BoardManager : MonoBehaviour
     }
 
     // moving items down
-    private IEnumerator MoveItemDown(Item item, float targetY, float fallDistance)
+    private IEnumerator MoveItemDown(Item item, float targetY, float fallDistance, bool isNewGenerated = false)
     {
+        item.isNewGenerated = isNewGenerated;
         item.isFalling = true;
 
         float fallSpeed = 4f;
