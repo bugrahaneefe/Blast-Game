@@ -46,11 +46,6 @@ public class BoardManager : MonoBehaviour
     public void LoadLevelData(int levelNumber)
     {
         LevelData levelData = LevelSceneManager.Instance.GetLevel(levelNumber);
-        if (levelData == null)
-        {
-            Debug.LogError($"level {levelNumber} data not found.");
-            return;
-        }
 
         width = levelData.grid_width;
         height = levelData.grid_height;
@@ -569,30 +564,6 @@ public class BoardManager : MonoBehaviour
                 // if node is null we are going to spawn new random cubeitem for there
                 if (board[x, y] == null)
                 {
-                    /*// if there is a stable obstacle above the empty space, new cube cant fall through there *****
-                    bool hasBlockingObstacleAbove = false;
-
-                    for (int checkY = y - 1; checkY >= 0; checkY--)
-                    {
-                        if (board[x, checkY] != null)
-                        {
-                            Item blockingItem = board[x, checkY].item.GetComponent<Item>();
-
-                            // box or stone
-                            if (blockingItem.itemType == ItemType.Stone || blockingItem.itemType == ItemType.Box)
-                            {
-                                hasBlockingObstacleAbove = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (hasBlockingObstacleAbove)
-                    {
-                        continue;
-                    }
-                    //******/
-
                     hasNewItems = true;
 
                     var (prefabToSpawn, assignedType) = GetPrefabAndType("rand");

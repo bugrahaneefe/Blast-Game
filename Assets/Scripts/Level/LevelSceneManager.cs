@@ -52,7 +52,6 @@ public class LevelSceneManager : MonoBehaviour
             if (level != null && level.grid != null)
             {
                 levels[level.level_number] = level;
-                Debug.Log($"Loaded Level {level.level_number} - {level.grid_width}x{level.grid_height}");
             }
         }
     }
@@ -83,5 +82,6 @@ public class LevelSceneManager : MonoBehaviour
     {
         int currentLevelNumber = PlayerPrefs.GetInt("LastPlayedLevel", 1);
         BoardManager.Instance.LoadLevelData(currentLevelNumber);
+        Debug.Log($"level loaded: {currentLevelNumber}");
     }
 }
