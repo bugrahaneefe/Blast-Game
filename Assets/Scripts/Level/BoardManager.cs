@@ -494,28 +494,29 @@ public class BoardManager : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         bool hasFallingItems = false;
-
         float boardWorldHeight = (height - 1) * spacingY;
 
         for (int x = 0; x < width; x++)
         {
+            // writeIndex indicates the next free cell (from the bottom) for a falling item.
             int writeIndex = height - 1;
 
+            // iterating from the bottom row to the top row.
             for (int y = height - 1; y >= 0; y--)
             {
                 if (board[x, y] != null)
                 {
-                    // script of item
                     Item item = board[x, y].item.GetComponent<Item>();
 
-                    // if item is stone or box, cant fall to below
+                    // if box or stone do not let it fall.
                     if (item.itemType == ItemType.Stone || item.itemType == ItemType.Box)
                     {
-                        writeIndex--;
+                        writeIndex = y - 1;
                         continue;
                     }
 
-                    if (writeIndex != y)
+                    // other items
+                    if (y != writeIndex)
                     {
                         board[x, writeIndex] = board[x, y];
                         board[x, y] = null;
@@ -525,7 +526,6 @@ public class BoardManager : MonoBehaviour
 
                         float finalY = -writeIndex * spacingY + (boardWorldHeight / 2f);
 
-                        // move items down
                         StartCoroutine(MoveItemDown(item, finalY, fallDistance));
 
                         hasFallingItems = true;
@@ -536,19 +536,18 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        // items landed
+        // wait for landing
         if (hasFallingItems)
         {
             yield return new WaitForSeconds(0.3f);
         }
 
-        // generate new cubes for emptied spaces
         yield return StartCoroutine(FallNewItems());
 
-        // check if there are new 4 or more matches for rocket state
+        // check for new available rocket states of cubes
         CheckForRocketState();
 
-        // unstun the user for further clicks
+        // unstun the user
         userStunned = false;
     }
 
