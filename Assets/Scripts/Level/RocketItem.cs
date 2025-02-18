@@ -28,6 +28,7 @@ public class RocketItem : Item
 
     public override void TakeDamage(DamageSource source = DamageSource.Default)
     {
+        SoundManager.Instance.PlayRocketClicked();
         // explode rocket if taken damage, another rocket may also explode rocket
         ExplodeRocket();
 

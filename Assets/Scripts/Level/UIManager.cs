@@ -71,7 +71,8 @@ public class UIManager : MonoBehaviour
         // wait for 3 sec
         yield return new WaitForSeconds(3f);
         LevelSceneManager.Instance.SetCurrentLevelNumber(LevelSceneManager.Instance.GetCurrentLevelNumber() + 1);
-                Debug.Log($"it is called {LevelSceneManager.Instance.GetCurrentLevelNumber()}");
+        
+        Debug.Log($"it is called {LevelSceneManager.Instance.GetCurrentLevelNumber()}");
         SceneManager.LoadScene("MainScene");
 
         // hide celebration panel

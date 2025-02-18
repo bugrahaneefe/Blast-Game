@@ -474,7 +474,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 369.06006, y: -97}
+  m_AnchoredPosition: {x: 369.06003, y: -97}
   m_SizeDelta: {x: 223.82, y: 192.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &271347184
@@ -587,9 +587,10 @@ MonoBehaviour:
   audioSource: {fileID: 365407866}
   clickSound: {fileID: 8300000, guid: 90ab06722ee994696b580cc97a71a42f, type: 3}
   boxBreakSound: {fileID: 8300000, guid: 6f2f50791a2d84aeeac4b79281f2ccd2, type: 3}
-  stoneBreakSound: {fileID: 8300000, guid: eabeb8661ca1b431a811b9a263ce8609, type: 3}
+  stoneBreakSound: {fileID: 8300000, guid: bbc66839dfc7b4d209fbad804c6e0a42, type: 3}
   vaseBreakSound: {fileID: 8300000, guid: 4402fb1f8bde849a99f3ec0dfc8553f4, type: 3}
   vaseCrackSound: {fileID: 8300000, guid: 37c26b2b3ee5540398ff72ae642af89d, type: 3}
+  rocketClicked: {fileID: 8300000, guid: cdc964c6d7a544a3e931a5ee07ca2af2, type: 3}
 --- !u!82 &365407866
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1541,7 +1542,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 376, y: 90}
+  m_AnchoredPosition: {x: 375.99997, y: 90}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1101109853

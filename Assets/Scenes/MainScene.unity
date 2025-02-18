@@ -610,9 +610,10 @@ MonoBehaviour:
   audioSource: {fileID: 974744769}
   clickSound: {fileID: 8300000, guid: 90ab06722ee994696b580cc97a71a42f, type: 3}
   boxBreakSound: {fileID: 8300000, guid: 6f2f50791a2d84aeeac4b79281f2ccd2, type: 3}
-  stoneBreakSound: {fileID: 8300000, guid: eabeb8661ca1b431a811b9a263ce8609, type: 3}
+  stoneBreakSound: {fileID: 8300000, guid: bbc66839dfc7b4d209fbad804c6e0a42, type: 3}
   vaseBreakSound: {fileID: 8300000, guid: 4402fb1f8bde849a99f3ec0dfc8553f4, type: 3}
   vaseCrackSound: {fileID: 8300000, guid: 37c26b2b3ee5540398ff72ae642af89d, type: 3}
+  rocketClicked: {fileID: 8300000, guid: cdc964c6d7a544a3e931a5ee07ca2af2, type: 3}
 --- !u!82 &974744769
 AudioSource:
   m_ObjectHideFlags: 0

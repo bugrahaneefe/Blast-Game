@@ -250,6 +250,7 @@ public class BoardManager : MonoBehaviour
             
             List<Item> connectedRocketItems = GetConnectedItems(clickedItem);
 
+            SoundManager.Instance.PlayRocketClicked();
             if (connectedRocketItems.Count > 1)
             {
                 // 3x3 effect for the combo rocket explosion
@@ -591,7 +592,7 @@ public class BoardManager : MonoBehaviour
                     {
                         continue;
                     }
-                    //*******/
+                    //******/
 
                     hasNewItems = true;
 
