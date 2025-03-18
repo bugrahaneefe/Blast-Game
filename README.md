@@ -1,6 +1,4 @@
 # Blast-Game
-Dream Games Case Study
-
 ## Screenshots
 
 | ![Screenshot 5](https://github.com/user-attachments/assets/d48973a1-510c-4741-9326-03f9e46005ec) | ![Screenshot 6](https://github.com/user-attachments/assets/e91499ae-f6ab-423c-a6d6-8fc320e959c1) |
